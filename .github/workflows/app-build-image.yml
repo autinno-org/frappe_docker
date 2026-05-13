@@ -64,7 +64,8 @@ on:
         required: false
       REGISTRY_PASSWORD:
         required: false
-
+      APP_REPO_PAT:
+        required: false
 permissions:
   contents: read
   packages: write
@@ -106,6 +107,7 @@ jobs:
           APP_REPO: ${{ inputs.app_repo }}
           APP_REF: ${{ inputs.app_ref }}
           APPS_JSON_PATH: ${{ env.APPS_JSON_PATH }}
+          APP_REPO_PAT: ${{ secrets.APP_REPO_PAT }}
         run: |
           mkdir -p "$(dirname "$APPS_JSON_PATH")"
           python3 - <<'PY'
@@ -115,16 +117,26 @@ jobs:
 
           repo = os.environ["APP_REPO"].strip()
           ref = os.environ["APP_REF"].strip()
+          pat = os.environ.get("APP_REPO_PAT", "").strip()
 
-          if repo.count("/") == 1 and not repo.startswith(("https://", "http://")):
-              repo = f"https://github.com/{repo}"
-
+          # Handle Branch/Tag prefixes
           for prefix in ("refs/heads/", "refs/tags/"):
               if ref.startswith(prefix):
                   ref = ref.removeprefix(prefix)
 
+          # Construct URL
+          # If it's a slug (contains one / and no protocol)
+          if "/" in repo and not repo.startswith(("https://", "http://")):
+              if pat:
+                  # Formats as https://<token>@github.com/org/repo.git
+                  url = f"https://{pat}@github.com/{repo}"
+              else:
+                  url = f"https://github.com/{repo}"
+          else:
+              url = repo
+
           Path(os.environ["APPS_JSON_PATH"]).write_text(
-              json.dumps([{"url": repo, "branch": ref}], indent=2) + "\n",
+              json.dumps([{"url": url, "branch": ref}], indent=2) + "\n",
               encoding="utf-8",
           )
           PY
