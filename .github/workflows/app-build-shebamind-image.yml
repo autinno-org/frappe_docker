@@ -1,0 +1,29 @@
+name: App / Build ShebaMind Image
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-image:
+    uses: autinno-org/frappe_docker/.github/workflows/app-build-image.yml@main
+    with:
+      app_name: shebamind # ShebaMind
+      app_repo: "https://${{ secrets.SHEBAMIND_REPO_PAT }}@github.com/autinno-oss/shebamind.git"
+      app_ref: develop
+      frappe_ref: version-16
+      frappe_image_prefix: ghcr.io/frappe
+      image_name: ghcr.io/autinno-org/frappe_docker # ghcr.io/autinno-oss/shebamind
+      image_tag: shebamind # develop
+      push: true
+      registry: ghcr.io
+      frappe_repo: https://github.com/frappe/frappe
+      builder_repository: autinno-org/frappe_docker # frappe/frappe_docker
+      builder_ref: main # develop
+      platforms: linux/amd64
