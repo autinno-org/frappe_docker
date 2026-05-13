@@ -146,6 +146,7 @@ jobs:
               encoding="utf-8",
           )
           PY
+          cat ${{ env.APPS_JSON_PATH }}
       - name: Build smoke-test image
         uses: docker/build-push-action@v7
         with:
