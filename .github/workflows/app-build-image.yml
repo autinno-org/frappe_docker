@@ -66,6 +66,8 @@ on:
         required: false
       APP_REPO_PAT:
         required: false
+      APP_REPO_USERNAME:
+        required: false
 permissions:
   contents: read
   packages: write
@@ -118,6 +120,7 @@ jobs:
           repo = os.environ["APP_REPO"].strip()
           ref = os.environ["APP_REF"].strip()
           pat = os.environ.get("APP_REPO_PAT", "").strip()
+          username = os.environ.get("APP_REPO_USERNAME", "").strip()
 
           # Handle Branch/Tag prefixes
           for prefix in ("refs/heads/", "refs/tags/"):
@@ -125,11 +128,13 @@ jobs:
                   ref = ref.removeprefix(prefix)
 
           # Construct URL
+          if pat:
+              echo "using pat to Construct repo URL"
           # If it's a slug (contains one / and no protocol)
           if "/" in repo and not repo.startswith(("https://", "http://")):
               if pat:
                   # Formats as https://<token>@github.com/org/repo.git
-                  url = f"https://{pat}@github.com/{repo}"
+                  url = f"https://{username}:{pat}@github.com/{repo}"
               else:
                   url = f"https://github.com/{repo}"
           else:
