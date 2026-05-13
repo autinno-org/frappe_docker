@@ -17,10 +17,10 @@ jobs:
       app_name: shebamind # ShebaMind
       app_repo: autinno-oss/shebamind.git
       app_ref: main #develop
-      frappe_ref: version-15 # version-16
+      frappe_ref: version-16
       frappe_image_prefix: ghcr.io/frappe
       image_name: ghcr.io/autinno-org/frappe_docker # ghcr.io/autinno-oss/shebamind
-      image_tag: develop # shebamind
+      image_tag: shebamind # develop
       push: true
       registry: ghcr.io
       frappe_repo: https://github.com/frappe/frappe
