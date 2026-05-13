@@ -129,17 +129,29 @@ jobs:
                   ref = ref.removeprefix(prefix)
 
           # Construct URL
-          if "/" in repo and not repo.startswith(("https://", "http://")):
-              if pat:
-                  print("Using PAT to construct repo URL")
-                  # Formats as https://username:token@github.com/org/repo
-                  # Note: Ensure username is provided or use 'x-access-token'
-                  auth_user = username if username else "x-access-token"
-                  url = f"https://{auth_user}:{pat}@github.com/{repo}"
-              else:
-                  url = f"https://github.com/{repo}"
+          # if "/" in repo and not repo.startswith(("https://", "http://")):
+          #     if pat:
+          #         print("Using PAT to construct repo URL")
+          #         # Formats as https://username:token@github.com/org/repo
+          #         # Note: Ensure username is provided or use 'x-access-token'
+          #         auth_user = username if username else "x-access-token"
+          #         url = f"https://{auth_user}:{pat}@github.com/{repo}"
+          #     else:
+          #         url = f"https://github.com/{repo}"
+          # else:
+          #     url = repo
+
+          # Construct URL
+          # Remove protocol if already present to standardize
+          repo_clean = repo.replace("https://", "").replace("http://", "")
+
+          if pat:
+              print("Using PAT to construct repo URL")
+              # Use x-access-token if username is missing; it's the GitHub standard for PATs
+              auth_user = username if username else "x-access-token"
+              url = f"https://{auth_user}:{pat}@{repo_clean}"
           else:
-              url = repo
+              url = f"https://{repo_clean}"
 
           Path(os.environ["APPS_JSON_PATH"]).write_text(
               json.dumps([{"url": url, "branch": ref}], indent=2) + "\n",
