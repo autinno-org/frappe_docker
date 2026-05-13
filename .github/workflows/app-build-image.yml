@@ -128,13 +128,13 @@ jobs:
                   ref = ref.removeprefix(prefix)
 
           # Construct URL
-          if pat:
-              echo "using pat to Construct repo URL"
-          # If it's a slug (contains one / and no protocol)
           if "/" in repo and not repo.startswith(("https://", "http://")):
               if pat:
-                  # Formats as https://<token>@github.com/org/repo.git
-                  url = f"https://{username}:{pat}@github.com/{repo}"
+                  print("Using PAT to construct repo URL")
+                  # Formats as https://username:token@github.com/org/repo
+                  # Note: Ensure username is provided or use 'x-access-token'
+                  auth_user = username if username else "x-access-token"
+                  url = f"https://{auth_user}:{pat}@github.com/{repo}"
               else:
                   url = f"https://github.com/{repo}"
           else:
@@ -145,7 +145,6 @@ jobs:
               encoding="utf-8",
           )
           PY
-
       - name: Build smoke-test image
         uses: docker/build-push-action@v7
         with:
