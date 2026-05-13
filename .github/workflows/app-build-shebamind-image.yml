@@ -14,9 +14,9 @@ jobs:
   build-image:
     uses: autinno-org/frappe_docker/.github/workflows/app-build-image.yml@develop # main
     with:
-      app_name: shebamind # ShebaMind
-      app_repo: "https://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@github.com/autinno-oss/shebamind.git" # autinno-oss/shebamind.git
-      app_ref: develop
+      app_name: ShebaMind # shebamind
+      app_repo: autinno-oss/shebamind.git
+      app_ref: main #develop
       frappe_ref: version-16
       frappe_image_prefix: ghcr.io/frappe
       image_name: ghcr.io/autinno-org/frappe_docker # ghcr.io/autinno-oss/shebamind
@@ -27,5 +27,5 @@ jobs:
       builder_repository: autinno-org/frappe_docker # frappe/frappe_docker
       builder_ref: develop # main
       platforms: linux/amd64
-    # secrets:
-    #   APP_REPO_PAT: ${{ secrets.SHEBAMIND_REPO_PAT }}
+    secrets:
+      APP_REPO_PAT: ${{ secrets.SHEBAMIND_REPO_PAT }}
