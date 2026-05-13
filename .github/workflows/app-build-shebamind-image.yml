@@ -25,7 +25,7 @@ jobs:
       registry: ghcr.io
       frappe_repo: https://github.com/frappe/frappe
       builder_repository: autinno-org/frappe_docker # frappe/frappe_docker
-      builder_ref: main # develop
+      builder_ref: develop # main
       platforms: linux/amd64
     secrets:
       APP_REPO_PAT: ${{ secrets.SHEBAMIND_REPO_PAT }}
