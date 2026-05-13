@@ -83,7 +83,7 @@ jobs:
     env:
       BUILDER_DIR: builder
       APPS_JSON_PATH: builder/.github/tmp/apps.json
-      CACHE_SCOPE: app-image-${{ inputs.app_name }}-${{ inputs.frappe_ref }}
+      CACHE_SCOPE: app-image-${{ inputs.app_name }}-${{ inputs.frappe_ref }}-${{ inputs.app_ref }} # app-image-${{ inputs.app_name }}-${{ inputs.frappe_ref }}
       TEST_IMAGE: local/${{ inputs.app_name }}:${{ github.run_id }}-${{ github.run_attempt }}
       FINAL_IMAGE: ${{ inputs.image_name }}:${{ inputs.image_tag }}
 
@@ -110,6 +110,7 @@ jobs:
           APP_REF: ${{ inputs.app_ref }}
           APPS_JSON_PATH: ${{ env.APPS_JSON_PATH }}
           APP_REPO_PAT: ${{ secrets.APP_REPO_PAT }}
+          APP_REPO_USERNAME: ${{ secrets.APP_REPO_USERNAME }}
         run: |
           mkdir -p "$(dirname "$APPS_JSON_PATH")"
           python3 - <<'PY'
@@ -167,8 +168,8 @@ jobs:
           APP_NAME: ${{ inputs.app_name }}
           TEST_IMAGE: ${{ env.TEST_IMAGE }}
         run: |
-          docker run --rm --entrypoint bash "$TEST_IMAGE" -lc \
-            "test -d /home/frappe/frappe-bench/apps/frappe && test -d /home/frappe/frappe-bench/apps/${APP_NAME}"
+          docker run --rm --entrypoint bash "$TEST_IMAGE" -lc "ls -R /home/frappe/frappe-bench/apps"
+          docker run --rm --entrypoint bash "$TEST_IMAGE" -lc "test -d /home/frappe/frappe-bench/apps/frappe && test -d /home/frappe/frappe-bench/apps/${APP_NAME}"
 
       - name: Login to GHCR
         if: ${{ inputs.push && inputs.registry == 'ghcr.io' }}
